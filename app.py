@@ -1,13 +1,15 @@
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import DefaultHttpxClient, OpenAI
 import json
 import os
 import requests
 from pypdf import PdfReader
-import gradio as gr
 
 
 load_dotenv(override=True)
+os.environ.setdefault("GRADIO_ANALYTICS_ENABLED", "False")
+
+import gradio as gr
 
 def push(text):
     requests.post(
@@ -82,7 +84,10 @@ class Me:
                 "Missing OpenAI API key. Set OPENAI_API_KEY as an environment variable "
                 "(recommended for Hugging Face Spaces Secrets)."
             )
-        self.openai = OpenAI(api_key=api_key)
+        self.openai = OpenAI(
+            api_key=api_key,
+            http_client=DefaultHttpxClient(trust_env=False),
+        )
         self.name = "Saubhagya Gaurav"
         reader = PdfReader("me/linkedin.pdf")
         self.linkedin = "www.linkedin.com/in/saubhagya-gaurav"
